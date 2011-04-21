@@ -1,0 +1,8 @@
+*.elc
+*~
+#*#
+*.dat
+tramp
+url/*
+backup/*
+auto-save-list/*
