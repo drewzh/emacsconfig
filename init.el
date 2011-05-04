@@ -3,6 +3,11 @@
 ;; Author: Andrew Higginson <azhigginson@gmail.com> ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; remove top bars
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; add directories to load path ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -60,6 +65,29 @@
 ;; enable generic modes
 ;require 'generic-x)
 
+;; text mode flyspell
+(add-hook 'text-mode-hook 'flyspell-mode)
+
+;; multi language flyspell
+(dolist (hook '(lisp-mode-hook
+                emacs-lisp-mode-hook
+                scheme-mode-hook
+                clojure-mode-hook
+                ruby-mode-hook
+                yaml-mode
+                python-mode-hook
+                shell-mode-hook
+                php-mode-hook
+                css-mode-hook
+                haskell-mode-hook
+                caml-mode-hook
+                nxml-mode-hook
+                crontab-mode-hook
+                perl-mode-hook
+                tcl-mode-hook
+                javascript-mode-hook))
+  (add-hook hook 'flyspell-prog-mode))
+
 ;; enable php mode
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -70,18 +98,9 @@
 (add-hook 'python-mode-hook
           (lambda () (interactive) (setq show-trailing-whitespace t)))
 
-;; enable javascript js mode
-;(autoload 'js2-mode "js2" nil t)
-;(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-
 ;;;;;;;;;;;;;;;;;
 ;; misc tweaks ;;
 ;;;;;;;;;;;;;;;;;
-;; remove top bars
-(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-
 ;; font size
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
