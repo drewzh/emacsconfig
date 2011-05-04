@@ -75,6 +75,12 @@
 (add-hook 'python-mode-hook
           (lambda () (interactive) (setq show-trailing-whitespace t)))
 
+;; Colourise CSS colour literals
+(autoload 'rainbow-turn-on "rainbow-mode" "Enable rainbow mode colour literal overlays")
+(add-hook 'css-mode-hook 'rainbow-turn-on)
+(add-hook 'html-mode-hook 'rainbow-turn-on)
+(add-hook 'sass-mode-hook 'rainbow-turn-on)
+
 ;;;;;;;;;;;;;;;;;;;;
 ;; spell checking ;;
 ;;;;;;;;;;;;;;;;;;;;
@@ -116,6 +122,12 @@
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 
+;; syntax highlighting everywhere
+(global-font-lock-mode t)
+
+;; get rid of the blinking cursor
+(blink-cursor-mode 0)
+
 ;; inhibit splash screen
 (setq inhibit-splash-screen t)
 
@@ -125,8 +137,15 @@
 ;; setup y/n shortcut
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+;; tab settings
+(setq-default indent-tabs-mode nil)
+(setq default-tab-width 3)
+
 ;; highlight parentheses
-(show-paren-mode 1)
+(show-paren-mode t)
+
+;; make bell visible
+(setq visible-bell t)
 
 ;; always show line numbers
 (global-linum-mode 1)
@@ -140,6 +159,9 @@
 ;; highlight current line
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "#330")
+
+;; show trailing spaces
+(show-trailing-whitespace t)
 
 ;; enter compressed archives transparently
 (auto-compression-mode 1)
@@ -166,6 +188,7 @@
 ;; enable ido mode
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
+(setq ido-use-filename-at-point nil)
 (ido-mode 1)
 
 ;; ctrl+tab buffer switch
@@ -174,3 +197,8 @@
 
 ;; easy window switching
 (windmove-default-keybindings 'meta)
+
+;; suppress gtk dialogues
+(setq use-file-dialog nil)
+(setq use-dialog-box nil)
+(setq inhibit-startup-screen t)
