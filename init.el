@@ -65,10 +65,31 @@
 ;; enable generic modes
 ;require 'generic-x)
 
-;; text mode flyspell
-(add-hook 'text-mode-hook 'flyspell-mode)
+;; enable php mode
+(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 
-;; multi language flyspell
+;; show python whitespace
+(require 'python)
+(add-hook 'python-mode-hook
+          (lambda () (interactive) (setq show-trailing-whitespace t)))
+
+;;;;;;;;;;;;;;;;;;;;
+;; spell checking ;;
+;;;;;;;;;;;;;;;;;;;;
+(autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
+(defun turn-on-flyspell ()
+  "Force flyspell-mode on using a positive arg.  For use in hooks."
+  (interactive)
+  (flyspell-mode 1))
+
+;; enable for text modes
+(add-hook 'message-mode-hook 'turn-on-flyspell)
+(add-hook 'text-mode-hook 'turn-on-flyspell)
+(add-hook 'fundamental-mode 'turn-on-flyspell)
+
+;; Enable for all languages
 (dolist (hook '(lisp-mode-hook
                 emacs-lisp-mode-hook
                 scheme-mode-hook
@@ -87,16 +108,6 @@
                 tcl-mode-hook
                 javascript-mode-hook))
   (add-hook hook 'flyspell-prog-mode))
-
-;; enable php mode
-(autoload 'php-mode "php-mode" "Major mode for editing php code." t)
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
-
-;; show python whitespace
-(require 'python)
-(add-hook 'python-mode-hook
-          (lambda () (interactive) (setq show-trailing-whitespace t)))
 
 ;;;;;;;;;;;;;;;;;
 ;; misc tweaks ;;
