@@ -1,0 +1,29 @@
+;; -*- mode: emacs-lisp; coding: emacs-mule; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Tue Jul  5 10:10:49 2011
+;; Desktop file format version 206
+;; Emacs version 23.3.1
+
+;; Global section:
+(setq desktop-missing-file-warning nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+(setq search-ring nil)
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq file-name-history '("/home/drew/.emacs.d/init.el" "/drew@192.168.122.29:/var/www/rfd/rfdocs/views.py"))
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 206
+  "/home/drew/.emacs.d/init.el"
+  "init.el"
+  'emacs-lisp-mode
+  '(yas/minor-mode auto-complete-mode linum-mode)
+  3237
+  '(2802 nil)
+  nil
+  nil
+  '((buffer-file-coding-system . undecided-unix)))
+

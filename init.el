@@ -13,9 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path user-emacs-directory)
 (add-to-list 'load-path (concat user-emacs-directory
-				(convert-standard-filename "elpa/")))
+                                (convert-standard-filename "elpa/")))
 (add-to-list 'load-path (concat user-emacs-directory
-				(convert-standard-filename "elpa-to-submit/")))
+                                (convert-standard-filename "elpa-to-submit/")))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; package system ;;
@@ -51,13 +51,41 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; centralised backup location ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Write backups to ~/.emacs.d/backup/
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
-      backup-by-copying      t  ; Don't de-link hard links
+(defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+(defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+(setq backup-directory-alist (list (cons ".*" backup-dir)))
+(setq auto-save-list-file-prefix autosave-dir)
+(setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+(setq backup-by-copying      t  ; Don't de-link hard links
       version-control        t  ; Use version numbers on backups
       delete-old-versions    t  ; Automatically delete excess backups:
       kept-new-versions      20 ; how many of the newest versions to keep
       kept-old-versions      5) ; and how many of the old
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; automatically save and restore sessions ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(setq desktop-path                '("~/.emacs.d/")
+      desktop-dirname             "~/.emacs.d/"
+      desktop-base-file-name      "emacs-desktop"
+      desktop-base-lock-name      "lock"
+      desktop-path                (list desktop-dirname)
+      desktop-save                t
+      desktop-files-not-to-save   "^$" ;reload tramp paths
+      desktop-load-locked-desktop nil)
+(desktop-save-mode 1)
+
+;;;;;;;;;;;;;;
+;; autopair ;;
+;;;;;;;;;;;;;;
+;; (require 'autopair)
+;; (autopair-global-mode 1)
+;; (defun autopair-insert-opening ()
+;;   (interactive)
+;;   (when (autopair-pair-p)
+;;     (setq autopair-action (list 'opening (autopair-find-pair) (point))))
+;;   (autopair-fallback))
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; language specific ;;
@@ -81,9 +109,48 @@
 (add-hook 'html-mode-hook 'rainbow-turn-on)
 (add-hook 'sass-mode-hook 'rainbow-turn-on)
 
+
+;;;;;;;;;;;;;
+;; flymake ;;
+;;;;;;;;;;;;;
+;; install pyflakes to check python code                                                                                                                                  
+(require 'flymake-cursor)
+(global-set-key [f4] 'flymake-goto-next-error)
+ 
+(when (load "flymake" t)
+  (defun flymake-pyflakes-init ()
+    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+           (local-file (file-relative-name
+                        temp-file
+                        (file-name-directory buffer-file-name))))
+      (list "pyflakes" (list local-file))))
+ 
+  (add-to-list 'flymake-allowed-file-name-masks
+               '("\\.py\\'" flymake-pyflakes-init)))
+ 
+(add-hook 'find-file-hook 'flymake-find-file-hook)
+
+(defun flymake-javascript-init ()
+ (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                    'flymake-create-temp-inplace))
+        (local-file (file-relative-name temp-file
+               (file-name-directory buffer-file-name))))
+   (list "~/.emacs.d/flymake-javascript" (list local-file))))
+
+(add-to-list 'flymake-allowed-file-name-masks '("\\.js\\'"
+flymake-javascript-init))
+
 ;;;;;;;;;;;;;;;;;;;;
 ;; spell checking ;;
 ;;;;;;;;;;;;;;;;;;;;
+(if (file-exists-p "/usr/bin/hunspell")                                         
+    (progn
+      (setq ispell-program-name "hunspell")
+      (eval-after-load "ispell"
+        '(progn (defun ispell-get-coding-system () 'utf-8)))))
+
+
 (autoload 'flyspell-mode "flyspell" "On-the-fly spelling checker." t)
 (defun turn-on-flyspell ()
   "Force flyspell-mode on using a positive arg.  For use in hooks."
@@ -94,6 +161,9 @@
 (add-hook 'message-mode-hook 'turn-on-flyspell)
 (add-hook 'text-mode-hook 'turn-on-flyspell)
 (add-hook 'fundamental-mode 'turn-on-flyspell)
+
+;; fix warning message
+(setq flyspell-issue-welcome-flag nil)
 
 ;; Enable for all languages
 (dolist (hook '(lisp-mode-hook
@@ -142,7 +212,11 @@
 (setq default-tab-width 3)
 
 ;; highlight parentheses
-(show-paren-mode t)
+(define-globalized-minor-mode global-highlight-parentheses-mode
+  highlight-parentheses-mode
+  (lambda ()
+    (highlight-parentheses-mode t)))
+(global-highlight-parentheses-mode t)
 
 ;; make bell visible
 (setq visible-bell t)
@@ -160,14 +234,8 @@
 (global-hl-line-mode 1)
 (set-face-background 'hl-line "#330")
 
-;; show trailing spaces
-(show-trailing-whitespace t)
-
 ;; enter compressed archives transparently
 (auto-compression-mode 1)
-
-;; automatic restore of desktop
-(desktop-save-mode 1)
 
 ;; Set this to whatever browser you use
 ;; (setq browse-url-browser-function 'browse-url-firefox)

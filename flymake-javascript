@@ -1,0 +1,3 @@
+#! /bin/sh
+
+jsc-1 -a --flymake $1
