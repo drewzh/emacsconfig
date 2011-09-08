@@ -7,4 +7,6 @@ session.*
 tramp
 url/*
 backup/*
+autosave/
+desktop/
 auto-save-list/*

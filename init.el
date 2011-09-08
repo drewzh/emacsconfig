@@ -76,17 +76,6 @@
       desktop-load-locked-desktop nil)
 (desktop-save-mode 1)
 
-;;;;;;;;;;;;;;
-;; autopair ;;
-;;;;;;;;;;;;;;
-;; (require 'autopair)
-;; (autopair-global-mode 1)
-;; (defun autopair-insert-opening ()
-;;   (interactive)
-;;   (when (autopair-pair-p)
-;;     (setq autopair-action (list 'opening (autopair-find-pair) (point))))
-;;   (autopair-fallback))
-
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; language specific ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -109,7 +98,6 @@
 (add-hook 'html-mode-hook 'rainbow-turn-on)
 (add-hook 'sass-mode-hook 'rainbow-turn-on)
 
-
 ;;;;;;;;;;;;;
 ;; flymake ;;
 ;;;;;;;;;;;;;
@@ -131,15 +119,15 @@
  
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 
-(defun flymake-javascript-init ()
- (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                    'flymake-create-temp-inplace))
-        (local-file (file-relative-name temp-file
-               (file-name-directory buffer-file-name))))
-   (list "~/.emacs.d/flymake-javascript" (list local-file))))
+;; (defun flymake-javascript-init ()
+;;  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                     'flymake-create-temp-inplace))
+;;         (local-file (file-relative-name temp-file
+;;                (file-name-directory buffer-file-name))))
+;;    (list "~/.emacs.d/flymake-javascript" (list local-file))))
 
-(add-to-list 'flymake-allowed-file-name-masks '("\\.js\\'"
-flymake-javascript-init))
+;; (add-to-list 'flymake-allowed-file-name-masks '("\\.js\\'"
+;; flymake-javascript-init))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; spell checking ;;
@@ -194,6 +182,13 @@ flymake-javascript-init))
 
 ;; syntax highlighting everywhere
 (global-font-lock-mode t)
+
+;; higlight changes in documents
+(global-highlight-changes-mode t)
+(set-face-foreground 'highlight-changes nil)
+(set-face-background 'highlight-changes "#001B1C")
+(set-face-foreground 'highlight-changes-delete nil)
+(set-face-background 'highlight-changes-delete "#261515")
 
 ;; get rid of the blinking cursor
 (blink-cursor-mode 0)
