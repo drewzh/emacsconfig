@@ -41,6 +41,13 @@
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (ac-config-default)
+(setq ac-auto-start t)
+(setq ac-delay 0)
+(setq ac-auto-show-menu t)
+(setq ac-show-menu-immediately-on-auto-complete t)
+(setq ac-trigger-key nil)
+;; fix auto completion
+(ac-flyspell-workaround)
 
 ;;;;;;;;;;;;;;;
 ;; yasnippet ;;
@@ -80,7 +87,7 @@
 ;; language specific ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; enable generic modes
-;require 'generic-x)
+                                        ;require 'generic-x)
 
 ;; enable php mode
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
@@ -104,7 +111,7 @@
 ;; install pyflakes to check python code                                                                                                                                  
 (require 'flymake-cursor)
 (global-set-key [f4] 'flymake-goto-next-error)
- 
+
 (when (load "flymake" t)
   (defun flymake-pyflakes-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
@@ -113,11 +120,28 @@
                         temp-file
                         (file-name-directory buffer-file-name))))
       (list "pyflakes" (list local-file))))
- 
+  
   (add-to-list 'flymake-allowed-file-name-masks
-               '("\\.py\\'" flymake-pyflakes-init)))
- 
+               '("\\.py\\'" flymake-pyflakes-init))
+  (defun flymake-html-init ()
+    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+           (local-file (file-relative-name
+                        temp-file
+                        (file-name-directory buffer-file-name))))
+      (list "tidy" (list local-file))))
+  
+  (add-to-list 'flymake-allowed-file-name-masks
+               '("\\.html$\\|\\.ctp" flymake-html-init))
+  
+  (add-to-list 'flymake-err-line-patterns
+               '("line \\([0-9]+\\) column \\([0-9]+\\) - \\(Warning\\|Error\\): \\(.*\\)"
+                 nil 1 2 4))
+
+  )
+
 (add-hook 'find-file-hook 'flymake-find-file-hook)
+
 
 ;; (defun flymake-javascript-init ()
 ;;  (let* ((temp-file (flymake-init-create-temp-buffer-copy
