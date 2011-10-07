@@ -13,7 +13,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path user-emacs-directory)
 (add-to-list 'load-path (concat user-emacs-directory
-                                (convert-standard-filename "packages/")))
+                                (convert-standard-filename "elpa/")))
+(add-to-list 'load-path (concat user-emacs-directory
+                                (convert-standard-filename "elpa-to-submit/")))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; package system ;;
@@ -29,9 +31,9 @@
 ;;;;;;;;;;;;;;;;;
 (when window-system
   (load "color-theme")
-  (load "color-theme-zenburn")
+  (load "color-theme-twilight")
   (setq color-theme-is-global t)
-  (color-theme-zenburn))
+  (color-theme-twilight))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; auto complete ;;
