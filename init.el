@@ -137,22 +137,6 @@
   (add-to-list 'flymake-allowed-file-name-masks
                '("\\.py\\'" flymake-pyflakes-init))
 
-  (defun flymake-php-init ()
-    ;; add a new error pattern to catch notices
-    (add-to-list 'flymake-err-line-patterns
-                 '("\\(Notice\\): \\(.*\\) in \\(.*\\) on line \\([0-9]+\\)"
-                   3 4 nil 2))
-    (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                       'flymake-create-temp-inplace))
-           (local-file  (file-relative-name
-                         temp-file
-                         (file-name-directory buffer-file-name))))
-      ;; here we removed the "-l" switch
-      (list "php" (list "-f" local-file))))
-  (add-to-list 'flymake-allowed-file-name-masks
-               '("\\.php\\'" flymake-php-init))
-
-
   (defun flymake-html-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
                        'flymake-create-temp-inplace))
@@ -168,17 +152,6 @@
                '("line \\([0-9]+\\) column \\([0-9]+\\) - \\(Warning\\|Error\\): \\(.*\\)"
                  nil 1 2 4))
   )
-
-
-;; (defun flymake-javascript-init ()
-;;  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-;;                     'flymake-create-temp-inplace))
-;;         (local-file (file-relative-name temp-file
-;;                (file-name-directory buffer-file-name))))
-;;    (list "~/.emacs.d/flymake-javascript" (list local-file))))
-
-;; (add-to-list 'flymake-allowed-file-name-masks '("\\.js\\'"
-;; flymake-javascript-init))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; spell checking ;;
