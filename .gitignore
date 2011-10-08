@@ -10,3 +10,7 @@ backup/*
 autosave/
 desktop/
 auto-save-list/*
+*archive-contents
+emacs-desktop
+lock
+anything-c-adaptive-history
