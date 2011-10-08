@@ -55,6 +55,20 @@
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/snippets")
 
+;;;;;;;;;;;;;;
+;; anything ;;
+;;;;;;;;;;;;;;
+(require 'anything)
+(require 'anything-config)
+(setq anything-sources
+      (list anything-c-source-buffers
+            anything-c-source-file-name-history
+            anything-c-source-info-pages
+            anything-c-source-man-pages
+            anything-c-source-file-cache
+            anything-c-source-emacs-commands))
+(global-set-key (kbd "M-X") 'anything)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; centralised backup location ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -108,7 +122,7 @@
 ;;;;;;;;;;;;;
 ;; flymake ;;
 ;;;;;;;;;;;;;
-;; install pyflakes to check python code                                                                                                                                  
+;; install pyflakes to check python code                                                     
 (require 'flymake-cursor)
 (global-set-key [f4] 'flymake-goto-next-error)
 
@@ -119,10 +133,26 @@
            (local-file (file-relative-name
                         temp-file
                         (file-name-directory buffer-file-name))))
-      (list "pyflakes" (list local-file))))
-  
+      (list "pyflakes" (list local-file))))  
   (add-to-list 'flymake-allowed-file-name-masks
                '("\\.py\\'" flymake-pyflakes-init))
+
+  (defun flymake-php-init ()
+    ;; add a new error pattern to catch notices
+    (add-to-list 'flymake-err-line-patterns
+                 '("\\(Notice\\): \\(.*\\) in \\(.*\\) on line \\([0-9]+\\)"
+                   3 4 nil 2))
+    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+           (local-file  (file-relative-name
+                         temp-file
+                         (file-name-directory buffer-file-name))))
+      ;; here we removed the "-l" switch
+      (list "php" (list "-f" local-file))))
+  (add-to-list 'flymake-allowed-file-name-masks
+               '("\\.php\\'" flymake-php-init))
+
+
   (defun flymake-html-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
                        'flymake-create-temp-inplace))
@@ -137,10 +167,7 @@
   (add-to-list 'flymake-err-line-patterns
                '("line \\([0-9]+\\) column \\([0-9]+\\) - \\(Warning\\|Error\\): \\(.*\\)"
                  nil 1 2 4))
-
   )
-
-(add-hook 'find-file-hook 'flymake-find-file-hook)
 
 
 ;; (defun flymake-javascript-init ()
@@ -271,6 +298,9 @@
 (setq cua-auto-tabify-rectangles nil)
 (transient-mark-mode 1)
 (setq cua-keep-region-after-copy t)
+
+;; select all
+(global-set-key "\C-a" 'mark-whole-buffer)
 
 ;; enable ido mode
 (setq ido-enable-flex-matching t)
