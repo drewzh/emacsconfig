@@ -87,8 +87,8 @@
 ;; automatically save and restore sessions ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(setq desktop-path                '("~/.emacs.d/")
-      desktop-dirname             "~/.emacs.d/"
+(setq desktop-path                '("~/.emacs.d/desktop")
+      desktop-dirname             "~/.emacs.d/desktop"
       desktop-base-file-name      "emacs-desktop"
       desktop-base-lock-name      "lock"
       desktop-path                (list desktop-dirname)
@@ -127,6 +127,9 @@
 (global-set-key [f4] 'flymake-goto-next-error)
 
 (when (load "flymake" t)
+
+(add-to-list 'flymake-allowed-file-name-masks '("\\.php$" flymake-php-init))
+
   (defun flymake-pyflakes-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
                        'flymake-create-temp-inplace))
