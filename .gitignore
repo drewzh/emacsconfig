@@ -8,7 +8,6 @@ tramp
 url/*
 backup/*
 autosave/
-desktop/
 auto-save-list/*
 *archive-contents
 emacs-desktop
