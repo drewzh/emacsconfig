@@ -29,6 +29,9 @@
 (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
                   ("elpa" . "http://tromey.com/elpa/")))
   (add-to-list 'package-archives source t))
+(defvar package-user-dir
+  (expand-file-name (convert-standard-filename "~/.emacs.d/packages"))
+  "Name of the directory where the user's packages are stored.")
 (package-initialize)
 
 ;;;;;;;;;;;;;;;;;
@@ -40,6 +43,14 @@
   (require 'color-theme-solarized)
   (setq color-theme-is-global t)
   (color-theme-solarized-dark))
+
+;;;;;;;;;;;;;;;;;;
+;; backup files ;;
+;;;;;;;;;;;;;;;;;;
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; auto complete ;;
@@ -113,6 +124,7 @@
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
+(add-hook 'php-mode-hook (lambda () (require 'php-align) (php-align-setup)))
 
 ;; show python whitespace
 (require 'python)
@@ -134,7 +146,7 @@
 
 (when (load "flymake" t)
 
-(add-to-list 'flymake-allowed-file-name-masks '("\\.php$" flymake-php-init))
+  (add-to-list 'flymake-allowed-file-name-masks '("\\.php$" flymake-php-init))
 
   (defun flymake-pyflakes-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
