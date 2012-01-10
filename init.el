@@ -12,10 +12,15 @@
 ;; add directories to load path ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path user-emacs-directory)
-(add-to-list 'load-path (concat user-emacs-directory
-                                (convert-standard-filename "elpa/")))
-(add-to-list 'load-path (concat user-emacs-directory
-                                (convert-standard-filename "elpa-to-submit/")))
+
+(let ((default-directory "~/.emacs.d/elpa/"))
+  (setq load-path
+	(append
+	 (let ((load-path (copy-sequence load-path))) ;; Shadow
+	   (append 
+	    (copy-sequence (normal-top-level-add-to-load-path '(".")))
+	    (normal-top-level-add-subdirs-to-load-path)))
+	 load-path)))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; package system ;;
@@ -31,9 +36,10 @@
 ;;;;;;;;;;;;;;;;;
 (when window-system
   (load "color-theme")
-  (load "color-theme-twilight")
+  ;;  (load "color-theme-twilight")
+  (require 'color-theme-solarized)
   (setq color-theme-is-global t)
-  (color-theme-twilight))
+  (color-theme-solarized-dark))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; auto complete ;;
@@ -86,7 +92,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; automatically save and restore sessions ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (setq desktop-path                '("~/.emacs.d/desktop")
       desktop-dirname             "~/.emacs.d/desktop"
       desktop-base-file-name      "emacs-desktop"
@@ -100,8 +105,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; language specific ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; enable generic modes
-                                        ;require 'generic-x)
+;;require 'generic-x)
 
 ;; enable php mode
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
@@ -230,8 +236,9 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; tab settings
-(setq-default indent-tabs-mode nil)
-(setq default-tab-width 3)
+(setq c-basic-indent 2)
+(setq tab-width 4)
+(setq indent-tabs-mode nil)
 
 ;; highlight parentheses
 (define-globalized-minor-mode global-highlight-parentheses-mode
