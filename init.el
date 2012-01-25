@@ -1,7 +1,10 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Customised emacs config                          ;;
-;; Author: Andrew Higginson <azhigginson@gmail.com> ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Customised emacs config                  ;;
+;; Author: Andrew Higginson <me@drewzh.com> ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Turn on debugging (comment this out for normal use)
+;(setq debug-on-error t)
 
 ;; remove top bars
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -29,9 +32,6 @@
 (dolist (source '(("marmalade" . "http://marmalade-repo.org/packages/")
                   ("elpa" . "http://tromey.com/elpa/")))
   (add-to-list 'package-archives source t))
-(defvar package-user-dir
-  (expand-file-name (convert-standard-filename "~/.emacs.d/packages"))
-  "Name of the directory where the user's packages are stored.")
 (package-initialize)
 
 ;;;;;;;;;;;;;;;;;
@@ -43,14 +43,6 @@
   (require 'color-theme-solarized)
   (setq color-theme-is-global t)
   (color-theme-solarized-dark))
-
-;;;;;;;;;;;;;;;;;;
-;; backup files ;;
-;;;;;;;;;;;;;;;;;;
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
 
 ;;;;;;;;;;;;;;;;;;;
 ;; auto complete ;;
@@ -117,9 +109,6 @@
 ;; language specific ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
-;; enable generic modes
-;;require 'generic-x)
-
 ;; enable php mode
 (autoload 'php-mode "php-mode" "Major mode for editing php code." t)
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
@@ -136,6 +125,13 @@
 (add-hook 'html-mode-hook 'rainbow-turn-on)
 (add-hook 'sass-mode-hook 'rainbow-turn-on)
 
+;; yaml mode
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+(add-hook 'yaml-mode-hook
+	  '(lambda ()
+	     (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
 ;;;;;;;;;;;;;
 ;; flymake ;;
 ;;;;;;;;;;;;;
@@ -144,7 +140,6 @@
 (global-set-key [f4] 'flymake-goto-next-error)
 
 (when (load "flymake" t)
-
   (add-to-list 'flymake-allowed-file-name-masks '("\\.php$" flymake-php-init))
 
   (defun flymake-pyflakes-init ()
@@ -228,11 +223,11 @@
 (global-font-lock-mode t)
 
 ;; higlight changes in documents
-(global-highlight-changes-mode t)
-(set-face-foreground 'highlight-changes nil)
-(set-face-background 'highlight-changes "#001B1C")
-(set-face-foreground 'highlight-changes-delete nil)
-(set-face-background 'highlight-changes-delete "#261515")
+;;(global-highlight-changes-mode t)
+;;(set-face-foreground 'highlight-changes nil)
+;;(set-face-background 'highlight-changes "#001B1C")
+;;(set-face-foreground 'highlight-changes-delete nil)
+;;(set-face-background 'highlight-changes-delete "#261515")
 
 ;; get rid of the blinking cursor
 (blink-cursor-mode 0)
@@ -272,7 +267,7 @@
 
 ;; highlight current line
 (global-hl-line-mode 1)
-(set-face-background 'hl-line "#330")
+;;(set-face-background 'hl-line "#330")
 
 ;; enter compressed archives transparently
 (auto-compression-mode 1)
@@ -313,3 +308,28 @@
 (setq use-file-dialog nil)
 (setq use-dialog-box nil)
 (setq inhibit-startup-screen t)
+
+;; Kills live buffers, leaves some emacs work buffers
+;; optained from http://www.chrislott.org/geek/emacs/dotemacs.html
+(defun nuke-buffers (&optional list)
+  "For each buffer in LIST, kill it silently if unmodified. Otherwise ask.
+LIST defaults to all existing live buffers."
+  (interactive)
+  (if (null list)
+      (setq list (buffer-list)))
+  (while list
+    (let* ((buffer (car list))
+	   (name (buffer-name buffer)))
+      (and (not (string-equal name ""))
+	   (not (string-equal name "*Messages*"))
+	  ;; (not (string-equal name "*Buffer List*"))
+	   (not (string-equal name "*buffer-selection*"))
+	   (not (string-equal name "*Shell Command Output*"))
+	   (not (string-equal name "*scratch*"))
+	   (/= (aref name 0) ? )
+	   (if (buffer-modified-p buffer)
+	       (if (yes-or-no-p
+		    (format "Buffer %s has been edited. Kill? " name))
+		   (kill-buffer buffer))
+	     (kill-buffer buffer))))
+    (setq list (cdr list))))
